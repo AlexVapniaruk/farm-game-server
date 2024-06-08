@@ -179,17 +179,21 @@ export function getRandomRedAnimal() {
 
 function reproduceAnimal(animalCount:number, animalKey:number, blueAnimalKey:number, redAnimalKey:number) {
     let animalNew = 0;
-    if (redAnimalKey === animalKey && blueAnimalKey === animalKey) {
+
+    if (
+        (redAnimalKey === animalKey && blueAnimalKey === animalKey)
+        || (redAnimalKey === animalKey || blueAnimalKey === animalKey)
+    ) {
         animalNew = animalCount + Math.floor(animalCount / 2);
-        animalNew = animalCount + 1;
-    } else if (redAnimalKey === animalKey || blueAnimalKey === animalKey) {
-        animalNew = animalCount + Math.floor(animalCount / 2);
-        if (animalCount % 2 === 1) {
-            console.log(animalNew);
-            animalNew = animalCount + 1;
-        } else {
-            console.log(animalNew, animalCount, animalKey, blueAnimalKey, redAnimalKey);
+        if (redAnimalKey === animalKey && blueAnimalKey === animalKey) {
+            animalNew += 1;
+        } else if (redAnimalKey === animalKey || blueAnimalKey === animalKey) {
+            if (animalCount % 2 === 1) {
+                animalNew += 1;
+            }
         }
+    } else {
+        animalNew = animalCount;
     }
     return animalNew;
 }
@@ -203,6 +207,7 @@ export function dropCubes(roomId: string) {
     const farm = getFarm(game);
 
     if (farm) {
+        console.log('rabbits');
         farm.rabbits = reproduceAnimal(farm.rabbits, 0, blueAnimalKey, redAnimalKey);
         farm.sheep = reproduceAnimal(farm.sheep, 1, blueAnimalKey, redAnimalKey);
         farm.pigs = reproduceAnimal(farm.pigs, 2, blueAnimalKey, redAnimalKey);
@@ -217,8 +222,8 @@ export function dropCubes(roomId: string) {
 
         if(blueAnimalKey === 4 && !farm.dogLevel2) {//wolf
             farm.rabbits = 0;
-            farm.pigs = 0;
             farm.sheep = 0;
+            farm.pigs = 0;
             farm.cows = 0;
         } else {
             farm.dogLevel2 = false;
