@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
 import dotenv from 'dotenv';
+import cors from 'cors'; // Import cors as ES6 module
 import {
     createRoom, getRoom, joinRoom, Rooms,
 } from './rooms';
@@ -10,20 +11,32 @@ import {
     createGame,
 } from './games';
 
-const cors = require('cors');
-
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+const allowedOrigins = ['http://localhost:5173', 'https://farm-game-ui-a2a519180e7d.herokuapp.com'];
+
+const corsOptions = {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    origin(origin, callback) {
+        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type'],
+    credentials: true,
+};
+
+app.use(cors(corsOptions));
+
 const server = http.createServer(app);
 const io = new Server(server, {
-    cors: {
-        origin: 'http://localhost:5173', // Allow requests from this origin
-        methods: ['GET', 'POST'],
-        allowedHeaders: ['Content-Type'],
-        credentials: true,
-    },
+    cors: corsOptions, // Use the same corsOptions for Socket.io
 });
 
 const PORT = process.env.PORT || 3000;
@@ -45,10 +58,10 @@ app.get('/rooms/:roomId', (req, res) => {
 
 const rooms: Rooms = {};
 
-const delay = (ms:number) => new Promise((resolve) => setTimeout(resolve, ms));
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-io.on('connection', (socket) => {
-    let socketRoomId:string;
+io.on('connection', (socket: Socket) => {
+    let socketRoomId: string;
 
     socket.on('joinRoom', ({ roomId, player }) => {
         socketRoomId = roomId;
