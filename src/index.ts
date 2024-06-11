@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
 import dotenv from 'dotenv';
+import * as path from 'path';
 import cors from 'cors'; // Import cors as ES6 module
 import {
     createRoom, getRoom, joinRoom, Rooms,
@@ -60,6 +61,12 @@ app.get('/rooms/:roomId', (req: Request, res: Response) => {
 });
 
 const rooms: Rooms = {};
+
+app.use(express.static(path.join(__dirname, '../frontend/build')));
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(`${__dirname}/../frontend/build/index.html`));
+});
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
