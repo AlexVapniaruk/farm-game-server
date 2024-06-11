@@ -10,9 +10,9 @@ type API_URL = {
 };
 
 const apiUrls: API_URL = {
-    CREATE_ROOM: (playerId: string) => `${baseUrl}create-room/${playerId}`,
-    JOIN_ROOM: (roomId: string, playerId: string) => `${baseUrl}join-room/${roomId}/${playerId}`,
-    GET_ROOM: (roomId: string) => `${baseUrl}rooms/${roomId}`
+    CREATE_ROOM: (playerId: string) => `${baseUrl}api/create-room/${playerId}`,
+    JOIN_ROOM: (roomId: string, playerId: string) => `${baseUrl}api/join-room/${roomId}/${playerId}`,
+    GET_ROOM: (roomId: string) => `${baseUrl}api/rooms/${roomId}`,
 };
 
 export default apiUrls;

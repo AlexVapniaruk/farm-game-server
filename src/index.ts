@@ -35,7 +35,7 @@ const io = new Server(server, {
 
 const PORT = process.env.PORT || 3000;
 
-app.post('/create-room/:hostId', (req: Request, res: Response) => {
+app.post('/api/create-room/:hostId', (req: Request, res: Response) => {
     const roomId = createRoom(req.params.hostId);
     createGame(roomId);
     res.json({ roomId });
@@ -43,7 +43,7 @@ app.post('/create-room/:hostId', (req: Request, res: Response) => {
 
 app.options('*', cors(corsOptions)); // Handle preflight requests
 
-app.get('/rooms/:roomId', (req: Request, res: Response) => {
+app.get('/api/rooms/:roomId', (req: Request, res: Response) => {
     const room = getRoom(req.params.roomId);
     res.json(room);
 });
