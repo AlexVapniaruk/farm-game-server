@@ -41,6 +41,10 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(`${__dirname}/frontend/dist/index.html`));
 });
 
+app.get('/api', (req: Request, res: Response) => {
+    res.send('Game server is running');
+});
+
 app.post('/api/create-room/:hostId', (req: Request, res: Response) => {
     const roomId = createRoom(req.params.hostId);
     createGame(roomId);
