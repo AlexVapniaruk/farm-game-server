@@ -2,9 +2,14 @@ import express, { Request, Response } from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
 import dotenv from 'dotenv';
-import { createRoom, getRoom, joinRoom, Rooms } from "./rooms";
-import {getGame, startGame, dropCubes, buyAnimal} from "./games";
-import {createGame} from "./games";
+import {
+    createRoom, getRoom, joinRoom, Rooms,
+} from './rooms';
+import {
+    getGame, startGame, dropCubes, buyAnimal, endMove,
+    createGame,
+} from './games';
+
 const cors = require('cors');
 
 dotenv.config();
@@ -40,6 +45,8 @@ app.get('/rooms/:roomId', (req, res) => {
 
 const rooms: Rooms = {};
 
+const delay = (ms:number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 io.on('connection', (socket) => {
     let socketRoomId:string;
 
@@ -69,8 +76,10 @@ io.on('connection', (socket) => {
         io.to(roomId).emit('gameUpdate', {});
     });
 
-    socket.on('playCubes', () => {
+    socket.on('playCubes', async () => {
+        io.to(socketRoomId).emit('playCubesAnimation', {});
         const game = dropCubes(socketRoomId);
+        await delay(1999);
         io.to(socketRoomId).emit('gameUpdate', { game });
     });
 
@@ -79,7 +88,12 @@ io.on('connection', (socket) => {
         io.to(socketRoomId).emit('gameUpdate', { game });
     });
 
-    socket.on('playerOffline', ({ roomId, playerId}) => {
+    socket.on('endMove', () => {
+        const game = endMove(socketRoomId);
+        io.to(socketRoomId).emit('gameUpdate', { game });
+    });
+
+    socket.on('playerOffline', ({ roomId, playerId }) => {
         const room = getRoom(roomId);
         room?.players.map((player) => {
             if (playerId === player.id) {

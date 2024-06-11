@@ -1,5 +1,5 @@
-import {Player} from './rooms';
-import {getRandomInt, shuffleArray} from "./helpers";
+import { Player } from './rooms';
+import { getRandomInt, shuffleArray } from './helpers';
 
 enum gameStatuses {
     notStarted,
@@ -14,8 +14,24 @@ enum animals {
     cow,
     horse,
     dogLevel1,
-    dogLevel2
+    dogLevel2,
+    fox,
+    wolf
+}
+
+const animalPoints = {
+    rabbit: 1,
+    sheep: 6,
+    pig: 12,
+    cow: 36,
+    horse: 72,
 };
+
+const winPoints = animalPoints.rabbit
+    + animalPoints.sheep
+    + animalPoints.pig
+    + animalPoints.cow
+    + animalPoints.horse;
 
 interface Farm {
     rabbits: number;
@@ -76,7 +92,7 @@ const newFarm: Farm = {
 const games: Games = {};
 
 export function createGame(roomId: string) {
-    games[roomId] = {...newGame};
+    games[roomId] = { ...newGame };
 }
 
 export function getGame(roomId: string) {
@@ -93,12 +109,10 @@ export function startGame(roomId: string, players: Player[]) {
     game.redCubeNumber = getRandomRedAnimal();
     game.moveNumber = 1;
     game.playingOrder = playersOrder;
-    game.players = players.filter((player: Player) => player.online).map((player): GamePlayer => {
-        return {
-            ...player,
-            farm: {...newFarm},
-        };
-    });
+    game.players = players.filter((player: Player) => player.online).map((player): GamePlayer => ({
+        ...player,
+        farm: { ...newFarm },
+    }));
 
     games[roomId] = game;
 
@@ -112,30 +126,30 @@ export function getRandomBlueAnimal() {
     // Map the number to the corresponding animal
     let animal;
     switch (randomNum) {
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-        case 6:
-            animal = 0;
-            break;
-        case 7:
-        case 8:
-        case 9:
-            animal = 1;
-            break;
-        case 10:
-            animal = 2;
-            break;
-        case 11:
-            animal = 3;
-            break;
-        case 12:
-            animal = 4;
-            break;
-        default:
-            animal = 5;
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+        animal = 0;
+        break;
+    case 7:
+    case 8:
+    case 9:
+        animal = 1;
+        break;
+    case 10:
+        animal = 2;
+        break;
+    case 11:
+        animal = 3;
+        break;
+    case 12:
+        animal = 8;
+        break;
+    default:
+        animal = 5;
     }
 
     return animal;
@@ -148,30 +162,30 @@ export function getRandomRedAnimal() {
     // Map the number to the corresponding animal
     let animal;
     switch (randomNum) {
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-        case 6:
-            animal = 0;
-            break;
-        case 7:
-        case 8:
-            animal = 1;
-            break;
-        case 9:
-        case 10:
-            animal = 2;
-            break;
-        case 11:
-            animal = 3;
-            break;
-        case 12:
-            animal = 4;
-            break;
-        default:
-            animal = 5;
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+        animal = 0;
+        break;
+    case 7:
+    case 8:
+        animal = 1;
+        break;
+    case 9:
+    case 10:
+        animal = 2;
+        break;
+    case 11:
+        animal = 4;
+        break;
+    case 12:
+        animal = 7;
+        break;
+    default:
+        animal = 5;
     }
 
     return animal;
@@ -207,37 +221,57 @@ export function dropCubes(roomId: string) {
     const farm = getFarm(game);
 
     if (farm) {
-        console.log('rabbits');
         farm.rabbits = reproduceAnimal(farm.rabbits, 0, blueAnimalKey, redAnimalKey);
         farm.sheep = reproduceAnimal(farm.sheep, 1, blueAnimalKey, redAnimalKey);
         farm.pigs = reproduceAnimal(farm.pigs, 2, blueAnimalKey, redAnimalKey);
         farm.cows = reproduceAnimal(farm.cows, 3, blueAnimalKey, redAnimalKey);
         farm.horses = reproduceAnimal(farm.horses, 4, blueAnimalKey, redAnimalKey);
 
-        if(redAnimalKey === 4 && !farm.dogLevel1) {//fox
+        if (redAnimalKey === 7 && !farm.dogLevel1) { // fox
             farm.rabbits = 0;
-        } else {
+        } else if (redAnimalKey === 7 && farm.dogLevel1) {
+            game.dogLevel1bought -= 1;
             farm.dogLevel1 = false;
         }
 
-        if(blueAnimalKey === 4 && !farm.dogLevel2) {//wolf
+        if (blueAnimalKey === 8 && !farm.dogLevel2) { // wolf
             farm.rabbits = 0;
             farm.sheep = 0;
             farm.pigs = 0;
             farm.cows = 0;
-        } else {
+        } else if (blueAnimalKey === 8 && farm.dogLevel2) {
+            game.dogLevel2bought -= 1;
             farm.dogLevel2 = false;
         }
 
         game = updateFarm(game, farm);
+
+        game.cubesPlayed = true;
+        if (checkWin(farm)) {
+            game.winnerId = game.playingId;
+        }
     }
 
     return game;
 }
 
+function checkWin(farm:Farm) {
+    const points = (farm.rabbits * animalPoints.rabbit)
+        + (farm.sheep * animalPoints.sheep)
+        + (farm.pigs * animalPoints.pig)
+        + (farm.cows * animalPoints.cow)
+        + (farm.horses * animalPoints.horse);
+
+    if (points >= winPoints) {
+        return true;
+    }
+
+    return false;
+}
+
 export function getFarm(game:GameState) {
     return game.players.find((player) => {
-        if(player.id === game.playingId) {
+        if (player.id === game.playingId) {
             return player;
         }
     })?.farm;
@@ -252,44 +286,59 @@ export function updateFarm(game:GameState, farm:Farm) {
     });
     return game;
 }
+
 export function buyAnimal(roomId:string, animalKey:number) {
     let game = games[roomId];
     const farm = getFarm(game);
 
-    if(farm) {
+    if (farm) {
         if (animalKey === animals.sheep) {
-            farm.rabbits = farm.rabbits - 6;
-            farm.sheep = farm.sheep + 1;
+            farm.rabbits -= 6;
+            farm.sheep += 1;
         }
 
-        if(animalKey === animals.pig) {
-            farm.sheep = farm.sheep - 2;
-            farm.pigs = farm.pigs + 1;
+        if (animalKey === animals.pig) {
+            farm.sheep -= 2;
+            farm.pigs += 1;
         }
 
-        if(animalKey === animals.cow) {
-            farm.pigs = farm.pigs - 3;
-            farm.cows = farm.cows + 1;
+        if (animalKey === animals.cow) {
+            farm.pigs -= 3;
+            farm.cows += 1;
         }
 
-        if(animalKey === animals.horse) {
-            farm.cows = farm.cows - 2;
-            farm.horses = farm.horses + 1;
+        if (animalKey === animals.horse) {
+            farm.cows -= 2;
+            farm.horses += 1;
         }
 
-        if(animalKey === animals.dogLevel1) {
-            farm.sheep = farm.sheep - 1;
+        if (animalKey === animals.dogLevel1) {
+            farm.sheep -= 1;
             farm.dogLevel1 = true;
+            game.dogLevel1bought += 1;
         }
 
-        if(animalKey === animals.dogLevel2) {
-            farm.cows = farm.cows - 1;
+        if (animalKey === animals.dogLevel2) {
+            farm.cows -= 1;
             farm.dogLevel2 = true;
+            game.dogLevel2bought += 1;
         }
 
         game = updateFarm(game, farm);
     }
 
     return game;
+}
 
+export function endMove(roomId:string) {
+    const game = games[roomId];
+    game.moveNumber += 1;
+    const playerIndex = game.playingOrder.findIndex((playerId) => playerId === game.playingId);
+    let nextIndex = 0;
+    if (playerIndex < (game.playingOrder.length - 1)) {
+        nextIndex = playerIndex + 1;
+    }
+    game.playingId = game.playingOrder[nextIndex];
+    game.cubesPlayed = false;
+    return game;
 }
