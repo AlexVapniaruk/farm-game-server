@@ -15,19 +15,9 @@ dotenv.config();
 
 const app = express();
 
-const allowedOrigins = ['http://localhost:5173', 'https://farm-game-ui-a2a519180e7d.herokuapp.com'];
-
 const corsOptions = {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    origin(origin, callback) {
-        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    methods: ['GET', 'POST'],
+    origin: '*', // Allow all origins
+    methods: '*',
     allowedHeaders: ['Content-Type'],
     credentials: true,
 };
