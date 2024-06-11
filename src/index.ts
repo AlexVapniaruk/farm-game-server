@@ -35,14 +35,9 @@ const io = new Server(server, {
 
 const PORT = process.env.PORT || 3000;
 
-app.options('*', cors(corsOptions)); // Handle preflight requests
-
 app.post('/create-room/:hostId', (req: Request, res: Response) => {
     const roomId = createRoom(req.params.hostId);
     createGame(roomId);
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.json({ roomId });
 });
 
@@ -50,9 +45,6 @@ app.options('*', cors(corsOptions)); // Handle preflight requests
 
 app.get('/rooms/:roomId', (req: Request, res: Response) => {
     const room = getRoom(req.params.roomId);
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.json(room);
 });
 
