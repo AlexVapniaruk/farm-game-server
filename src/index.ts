@@ -37,10 +37,6 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.static(path.join(__dirname, '/frontend/dist')));
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(`${__dirname}/frontend/dist/index.html`));
-});
-
 app.get('/api', (req: Request, res: Response) => {
     res.send('Game server is running');
 });
@@ -54,6 +50,10 @@ app.post('/api/create-room/:hostId', (req: Request, res: Response) => {
 app.get('/api/rooms/:roomId', (req: Request, res: Response) => {
     const room = getRoom(req.params.roomId);
     res.json(room);
+});
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(`${__dirname}/frontend/dist/index.html`));
 });
 
 const rooms: Rooms = {};
