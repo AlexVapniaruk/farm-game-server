@@ -1,2 +1,2 @@
 web: cd ./frontend && npm run start
-api: npm start
+api: npm run start

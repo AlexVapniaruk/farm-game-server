@@ -47,8 +47,6 @@ app.post('/api/create-room/:hostId', (req: Request, res: Response) => {
     res.json({ roomId });
 });
 
-app.options('*', cors(corsOptions)); // Handle preflight requests
-
 app.get('/api/rooms/:roomId', (req: Request, res: Response) => {
     const room = getRoom(req.params.roomId);
     res.json(room);
