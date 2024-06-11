@@ -35,6 +35,12 @@ const io = new Server(server, {
 
 const PORT = process.env.PORT || 3000;
 
+app.use(express.static(path.join(__dirname, '/frontend/dist')));
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(`${__dirname}/frontend/dist/index.html`));
+});
+
 app.post('/api/create-room/:hostId', (req: Request, res: Response) => {
     const roomId = createRoom(req.params.hostId);
     createGame(roomId);
@@ -49,12 +55,6 @@ app.get('/api/rooms/:roomId', (req: Request, res: Response) => {
 });
 
 const rooms: Rooms = {};
-
-app.use(express.static(path.join(__dirname, '../frontend/dist')));
-
-app.get('*', (req, res) => {
-    res.sendFile(path.join(`${__dirname}/../frontend/dist/index.html`));
-});
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
