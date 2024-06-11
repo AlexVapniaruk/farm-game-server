@@ -36,13 +36,13 @@ app.get('/', (req: Request, res: Response) => {
     res.send('Game server is running');
 });
 
-app.post('/create-room/:hostId', (req, res) => {
+app.post('/create-room/:hostId', cors(corsOptions), (req, res) => {
     const roomId = createRoom(req.params.hostId);
     createGame(roomId);
     res.json({ roomId });
 });
 
-app.get('/rooms/:roomId', (req, res) => {
+app.get('/rooms/:roomId', cors(corsOptions), (req, res) => {
     const room = getRoom(req.params.roomId);
     res.json(room);
 });
