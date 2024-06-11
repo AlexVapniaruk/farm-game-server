@@ -36,14 +36,20 @@ app.get('/', (req: Request, res: Response) => {
     res.send('Game server is running');
 });
 
-app.post('/create-room/:hostId', cors(corsOptions), (req, res) => {
+app.post('/create-room/:hostId', (req: Request, res: Response) => {
     const roomId = createRoom(req.params.hostId);
     createGame(roomId);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.json({ roomId });
 });
 
-app.get('/rooms/:roomId', cors(corsOptions), (req, res) => {
+app.get('/rooms/:roomId', (req: Request, res: Response) => {
     const room = getRoom(req.params.roomId);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.json(room);
 });
 
