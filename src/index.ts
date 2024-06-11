@@ -35,10 +35,6 @@ const io = new Server(server, {
 
 const PORT = process.env.PORT || 3000;
 
-app.get('/', (req: Request, res: Response) => {
-    res.send('Game server is running');
-});
-
 app.options('*', cors(corsOptions)); // Handle preflight requests
 
 app.post('/create-room/:hostId', (req: Request, res: Response) => {
