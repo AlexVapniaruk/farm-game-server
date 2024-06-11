@@ -17,12 +17,13 @@ const app = express();
 
 const corsOptions = {
     origin: '*', // Allow all origins
-    methods: '*',
+    methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
     credentials: true,
 };
 
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Handle preflight requests
 
 const server = http.createServer(app);
 const io = new Server(server, {
