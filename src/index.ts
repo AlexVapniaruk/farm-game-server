@@ -21,7 +21,8 @@ const corsOptions = {
     allowedHeaders: ['Content-Type'],
 };
 
-app.use(cors(corsOptions));
+app.use(cors(corsOptions)); // Use CORS middleware
+app.use(express.json()); // To parse JSON request body
 app.options('*', cors(corsOptions)); // Handle preflight requests
 
 const server = http.createServer(app);
