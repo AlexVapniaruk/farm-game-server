@@ -10,6 +10,9 @@
     "rootDir": "./src",
     "resolveJsonModule": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.test.ts"]
+  "include": [
+    "api/src/**/*"
+  ],
+  "exclude": [
+    "../node_modules", "**/*.test.ts"]
 }
