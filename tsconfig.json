@@ -6,7 +6,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist",
+    "outDir": "./api/dist",
     "rootDir": "./src",
     "resolveJsonModule": true
   },
@@ -14,5 +14,5 @@
     "./src/**/*"
   ],
   "exclude": [
-    "../node_modules", "**/*.test.ts"]
+    "./node_modules", "**/*.test.ts"]
 }

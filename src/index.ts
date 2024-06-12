@@ -19,10 +19,12 @@ const app = express();
 const corsOptions = {
     origin: '*', // Allow all origins
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-    preflightContinue: false,
+    preflightContinue: true,
     allowedHeaders: ['Content-Type'],
     optionsSuccessStatus: 204,
 };
+
+app.use(cors());
 
 app.use(cors(corsOptions)); // Use CORS middleware
 app.use(express.json()); // To parse JSON request body
