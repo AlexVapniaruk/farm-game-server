@@ -8,7 +8,7 @@
     "start": "node api/dist/index.js",
     "build": "node_modules/.bin/tsc",
     "dev": "node_modules/.bin/ts-node src/index.ts",
-    "lint": "node_modules/.bin/eslint . --ext .ts",
+    "lint": "node_modules/.bin/eslint . --ext .ts"
   },
   "keywords": [],
   "author": "",
