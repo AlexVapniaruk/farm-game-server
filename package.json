@@ -9,8 +9,6 @@
     "build": "node_modules/.bin/tsc",
     "dev": "node_modules/.bin/ts-node src/index.ts",
     "lint": "node_modules/.bin/eslint . --ext .ts",
-    "frontend": "cd ../frontend && npm start",
-    "heroku-postbuild": "cd ../frontend && npm install && npm run build"
   },
   "keywords": [],
   "author": "",
