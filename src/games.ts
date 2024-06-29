@@ -53,6 +53,7 @@ export interface GameState {
     winnerId: string | null;
     moveNumber: number;
     cubesPlayed: boolean;
+    exchangeMade: boolean;
     redCubeNumber: number;
     blueCubeNumber: number;
     dogLevel1bought: number;
@@ -73,6 +74,7 @@ const newGame: GameState = {
     redCubeNumber: 0,
     blueCubeNumber: 0,
     cubesPlayed: false,
+    exchangeMade: false,
     dogLevel1bought: 0,
     dogLevel2bought: 0,
     playingOrder: [],
@@ -108,6 +110,8 @@ export function startGame(roomId: string, players: Player[]) {
     game.blueCubeNumber = getRandomBlueAnimal();
     game.redCubeNumber = getRandomRedAnimal();
     game.moveNumber = 1;
+    game.exchangeMade = false;
+    game.cubesPlayed = false;
     game.playingOrder = playersOrder;
     game.players = players.filter((player: Player) => player.online).map((player): GamePlayer => ({
         ...player,
@@ -324,6 +328,7 @@ export function buyAnimal(roomId:string, animalKey:number) {
             game.dogLevel2bought += 1;
         }
 
+        game.exchangeMade = true;
         game = updateFarm(game, farm);
     }
 
@@ -339,6 +344,7 @@ export function endMove(roomId:string) {
         nextIndex = playerIndex + 1;
     }
     game.playingId = game.playingOrder[nextIndex];
+    game.exchangeMade = false;
     game.cubesPlayed = false;
     return game;
 }
